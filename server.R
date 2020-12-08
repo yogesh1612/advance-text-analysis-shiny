@@ -92,7 +92,7 @@ shinyServer(function(input, output) {
             }
             if(input$key_algo=="Noun-Verb Phrase"){
                 phrase_tags <- as_phrasemachine(anotated_data()$upos, type = "upos")
-                stats <- keywords_phrases(x = phrase_tag, term = tolower(anotated_data()$token),
+                stats <- keywords_phrases(x = phrase_tags, term = tolower(anotated_data()$token),
                                           pattern = "(A|N)*N(P+D*(A|N)*N)*",
                                           is_regex = TRUE, detailed = FALSE)
                 stats <- subset(stats, ngram > 1 & freq > 3)
