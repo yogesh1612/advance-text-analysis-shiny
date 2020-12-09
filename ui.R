@@ -14,6 +14,12 @@ shinyUI(fluidPage(
         fileInput("file", "Upload text file"),
         fileInput("model","Upload model file"),
         htmlOutput('pos_select_ui'),
+        materialSwitch(
+            inputId = "Id077",
+            label = "Lemmatization", 
+            value = TRUE,
+            status = "primary"
+        ),
         textInput('stopw',label = "Enter stopwords seperated by comma"),
         sliderInput('pos_slider',"Select top k words to display",min = 1,max = 100,value = 20,step = 1),
         #progressBar(id = "pb4", value = 50, display_pct = TRUE)
@@ -46,8 +52,33 @@ shinyUI(fluidPage(
                              p("Please note that download will not work with RStudio interface. Download will work only in web-browsers. So open this app in a web-browser and then download the example file. For opening this app in web-browser click on \"Open in Browser\" as shown below -"),
                              img(src = "example1.png")),
                     
-                    tabPanel("POS TAG",h4("POS TAG"), dataTableOutput(outputId = "a_table"),
-                             withSpinner(plotOutput("pos_plot"))
+                    tabPanel("POS TAG",h4("Summary Table"), 
+                             withSpinner(dataTableOutput(outputId = "a_table")),
+                             withSpinner(plotOutput("pos_plot")),
+                             dropdownButton(
+                                 
+                                 tags$h3("List of Inputs"),
+                                 
+                                 sliderInput(inputId = 'min_freq',
+                                             label = 'Minimum Frequency',
+                                             value = 3,
+                                             min = 1,
+                                             max = 10),
+                                 
+                                 sliderInput(inputId = 'max_word',
+                                             label = 'Maximum Word',
+                                             value = 20,
+                                             min = 5,
+                                             max = 100),
+                                 
+                                 circle = TRUE, status = "danger",
+                                 icon = icon("gear"), width = "200px",
+                                 
+                                 tooltip = tooltipOptions(title = "Click to see inputs !")
+                             ),
+                             
+                             plotOutput(outputId = 'word_cloud',width = "800",height = "400")
+                    
                              ),
                   
                     tabPanel("Keyword Extraction",
