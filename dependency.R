@@ -7,4 +7,4 @@ if (!require(shinyWidgets)) {install.packages("shinyWidgets")};  library(shinyWi
 if (!require(shinydashboard)) {install.packages("shinydashboard")};  library(shinydashboard)
 if(!require(lattice)){install.packages('lattice')};library(lattice)
 if (!require(shiny)) {install.packages("shiny")};  library(shiny)
-if (!require(shinycssloaders)) {install.packages("shinycssloaders")};  library(shinycssloaders)
+if (!require(stringr)) {install.packages("stringr")};  library(stringr)
