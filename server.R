@@ -42,9 +42,9 @@ shinyServer(function(input, output) {
             
             radioButtons("pos_select", "Display most frequent",
                                choiceNames = 
-                                   list('Noun', 'Verb','Adjective', 'Adverb'),
+                                   list('Noun', 'Verb','Adjective', 'Adverb',"Proper Noun"),
                                choiceValues =
-                                   list("NOUN", "VERB", "ADJ", "ADV")
+                                   list("NOUN", "VERB", "ADJ", "ADV","NNPS")
             )
             
         
@@ -59,9 +59,22 @@ shinyServer(function(input, output) {
     output$pos_plot <- renderPlot({
         
         if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        
         else{
-            stats <- subset(anotated_data(), upos %in% input$pos_select) 
-            stats <- txt_freq(stats$token)
+            if(input$pos_select=="NNPS"){
+                stats <- subset(anotated_data(), xpos %in% input$pos_select)
+               
+            }else{
+                stats <- subset(anotated_data(), upos %in% input$pos_select)
+                
+            }
+            
+            if(input$Id077){
+                stats <- txt_freq(stats$lemma)
+            }else{
+                stats <- txt_freq(stats$token)   
+            }
+            
             
             if(length(stopw()!=0)){
             stats <- stats %>%
@@ -77,7 +90,54 @@ shinyServer(function(input, output) {
         
     })
     
+    output$a_table <- renderDataTable({
+        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        else{
+            summ_table <- as.data.frame(table(anotated_data()$upos))
+            colnames(summ_table) <- c("POS TAG", "Count")
+            summ_table <- replace_abb(summ_table)
+            return(summ_table)
+        }
+        
+    },options = list(pageLength = 5))
     
+    
+    
+    output$word_cloud <- renderPlot({
+        
+        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        else{
+            if(input$pos_select=="NNPS"){
+                stats <- subset(anotated_data(), xpos %in% input$pos_select)
+            }else{
+                stats <- subset(anotated_data(), upos %in% input$pos_select)
+                
+            }
+            if(input$Id077){
+                stats <- txt_freq(stats$lemma)
+            }else{
+                stats <- txt_freq(stats$token)   
+            }
+            
+            
+            if(length(stopw()!=0)){
+                stats <- stats %>%
+                    select(key, freq, freq_pct) %>% 
+                    filter(!key %in% stopw())
+            }
+            
+            stats$key <- factor(stats$key, levels = rev(stats$key))
+            
+            wordcloud(words = stats$key, 
+                      freq = stats$freq, 
+                      min.freq = input$min_freq, 
+                      max.words = input$max_word,
+                      random.order = FALSE, 
+                      colors = brewer.pal(6, "Dark2"),
+                      scale=c(5,0.5))
+        }
+        
+    })
     output$key_plot <- renderPlot({
         if (is.null(input$file) | is.null(input$model)) { return(NULL) }
         else{
