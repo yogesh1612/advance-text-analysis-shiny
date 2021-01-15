@@ -8,3 +8,4 @@ if (!require(shinydashboard)) {install.packages("shinydashboard")};  library(shi
 if(!require(lattice)){install.packages('lattice')};library(lattice)
 if (!require(shiny)) {install.packages("shiny")};  library(shiny)
 if (!require(stringr)) {install.packages("stringr")};  library(stringr)
+if (!require(wordcloud)) {install.packages("wordcloud")};  library(wordcloud)
